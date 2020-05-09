@@ -29,7 +29,8 @@ case class Signaller(sigStr: String)(f: => Unit) extends Scoped{
     finally{
       val head::tail = handlers(sig)
       handlers(sig) = tail
-      sun.misc.Signal.handle(sig, head)
+      val newSignalHandler = tail.headOption.getOrElse(sun.misc.SignalHandler.SIG_DFL)
+      sun.misc.Signal.handle(sig, newSignalHandler)
     }
   }
 }
